@@ -1,7 +1,7 @@
 const http = require('http');
 
 const requestListener = (request, response) => {
-    response.setHeader('Content-Type', 'application/json');
+    response.setHeader('Content-Type', 'text/html');
     response.setHeader('X-Powered-By', 'NodeJS');
     response.setHeader('Develop-By', 'Mas Agung');
 
@@ -13,16 +13,22 @@ const requestListener = (request, response) => {
     if (url == '/') {
         if (method == "GET") { //curl -X GET http://localhost:5000/
             response.statusCode = 200;
-            response.end('<h1>Ini Adalah Homepage!</h1>');
+            response.end(JSON.stringify({
+                message: "Halo! Ini adalah halaman Home"
+            }));
         } else { // curl -X <any> http://localhost:5000/
             response.statusCode = 400;
-            response.end(`<h1>Halaman tidak dapat diakses dengan ${method} request</h1>`);
+            response.end(JSON.stringify({
+                message: `Halaman tidak dapat diakses menggunakan ${method} tersebut`,
+            }));
         }
 
     } else if (url == '/about') {
         if (method == "GET") { // curl -X GET http://localhost:5000/about
             response.statusCode = 200;
-            response.end('<h1>Ini Adalah About!</h1>');
+            response.end(JSON.stringify({
+                message: "Halo! Ini adalah halaman about"
+            }));
         } else if (method == "POST") { //curl -X POST -H "Content-Type: application/json" http://localhost:5000/about -d "{\"name\": \"Dimas\"}"
 
             let body = [];
@@ -38,10 +44,12 @@ const requestListener = (request, response) => {
 
 
 
-        } else {// curl -X <any> http://localhost:5000/about
-            response.statusCode = 404;
-            response.end(`<h1>Halaman tidak dapat diakses dengan ${method} request</h1>`);
         }
+    } else {// curl -X <any> http://localhost:5000/about
+        response.statusCode = 404;
+        response.end(JSON.stringify({
+            message: "Halaman tidak dapat diakses menggunakan method tersebut"
+        }));
     }
 };
 
