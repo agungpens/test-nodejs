@@ -11,13 +11,16 @@ const requestListener = (request, response) => {
 
     if (url == '/') {
         if (method == "GET") { //curl -X GET http://localhost:5000/
+            response.statusCode = 200;
             response.end('<h1>Ini Adalah Homepage!</h1>');
         } else { // curl -X <any> http://localhost:5000/
+            response.statusCode = 400;
             response.end(`<h1>Halaman tidak dapat diakses dengan ${method} request</h1>`);
         }
 
     } else if (url == '/about') {
         if (method == "GET") { // curl -X GET http://localhost:5000/about
+            response.statusCode = 200;
             response.end('<h1>Ini Adalah About!</h1>');
         } else if (method == "POST") { //curl -X POST -H "Content-Type: application/json" http://localhost:5000/about -d "{\"name\": \"Dimas\"}"
 
@@ -25,7 +28,7 @@ const requestListener = (request, response) => {
             request.on('data', (chunk) => {
                 body.push(chunk);
             });
-
+            response.statusCode = 200;
             request.on('end', () => {
                 body = Buffer.concat(body).toString();
                 const { name } = JSON.parse(body);
@@ -35,6 +38,7 @@ const requestListener = (request, response) => {
 
 
         } else {// curl -X <any> http://localhost:5000/about
+            response.statusCode = 404;
             response.end(`<h1>Halaman tidak dapat diakses dengan ${method} request</h1>`);
         }
     }
