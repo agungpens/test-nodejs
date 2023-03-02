@@ -2,7 +2,8 @@ const http = require('http');
 
 const requestListener = (request, response) => {
     response.setHeader('Content-Type', 'application/json');
-
+    response.setHeader('X-Powered-By', 'NodeJS');
+    response.setHeader('Develop-By', 'Mas Agung');
 
     response.statusCode = 200;
     // Handling Request
