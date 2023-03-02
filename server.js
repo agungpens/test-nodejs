@@ -6,34 +6,38 @@ const requestListener = (request, response) => {
 
     response.statusCode = 200;
     // Handling Request
-    const { method } = request;
+    const { method, url } = request;
 
-    if (method == "GET") {
-        response.end('<h1>Hello, HTTP Server GET!</h1>');
+
+    if (url == '/') {
+        if (method == "GET") { //curl -X GET http://localhost:5000/
+            response.end('<h1>Ini Adalah Homepage!</h1>');
+        } else { // curl -X <any> http://localhost:5000/
+            response.end(`<h1>Halaman tidak dapat diakses dengan ${method} request</h1>`);
+        }
+
+    } else if (url == '/about') {
+        if (method == "GET") { // curl -X GET http://localhost:5000/about
+            response.end('<h1>Ini Adalah About!</h1>');
+        } else if (method == "POST") { //curl -X POST -H "Content-Type: application/json" http://localhost:5000/about -d "{\"name\": \"Dimas\"}"
+
+            let body = [];
+            request.on('data', (chunk) => {
+                body.push(chunk);
+            });
+
+            request.on('end', () => {
+                body = Buffer.concat(body).toString();
+                const { name } = JSON.parse(body);
+                response.end(`<h1>Hello,${name}, Ini Adalah About!!</h1>`);
+            });
+
+
+
+        } else {// curl -X <any> http://localhost:5000/about
+            response.end(`<h1>Halaman tidak dapat diakses dengan ${method} request</h1>`);
+        }
     }
-    if (method == "POST") {
-
-        let body = [];
-        request.on('data', (chunk) => {
-            body.push(chunk);
-        });
-
-        request.on('end', () => {
-            body = Buffer.concat(body).toString();
-            const { name } = JSON.parse(body);
-            response.end(`<h1>Hello,${name}</h1>`);
-        });
-
-
-
-    }
-    if (method == "PUT") {
-        response.end('<h1>Hello, HTTP Server PUT!</h1>');
-    }
-    if (method == "DELETE") {
-        response.end('<h1>Hello, HTTP Server DELETE!</h1>');
-    }
-
 };
 
 const server = http.createServer(requestListener);
