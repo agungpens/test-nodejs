@@ -1,7 +1,8 @@
 const http = require('http');
 
 const requestListener = (request, response) => {
-    response.setHeader('Content-Type', 'text/html');
+    response.setHeader('Content-Type', 'application/json');
+
 
     response.statusCode = 200;
     // Handling Request
@@ -11,7 +12,20 @@ const requestListener = (request, response) => {
         response.end('<h1>Hello, HTTP Server GET!</h1>');
     }
     if (method == "POST") {
-        response.end('<h1>Hello, HTTP Server POST!</h1>');
+
+        let body = [];
+        request.on('data', (chunk) => {
+            body.push(chunk);
+        });
+
+        request.on('end', () => {
+            body = Buffer.concat(body).toString();
+            const { name } = JSON.parse(body);
+            response.end(`<h1>Hello,${name}</h1>`);
+        });
+
+
+
     }
     if (method == "PUT") {
         response.end('<h1>Hello, HTTP Server PUT!</h1>');
